@@ -1,5 +1,4 @@
 import gspread
-from dotenv import dotenv_values
 
 class SheetRobot:
     # the current spreadsheet to edit with
@@ -10,6 +9,7 @@ class SheetRobot:
     # constructor, takes in path to credentials and should login via gspread
     def __init__(self, path_to_credentials):
         self._service_account = gspread.service_account(filename=path_to_credentials)
+        print("Connected to new service account!")
     
     # use this to modify the values of the class to the current spreadsheet so it can be easily edited
     # using the helper functions below

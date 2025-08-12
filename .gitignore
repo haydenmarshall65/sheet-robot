@@ -1,3 +1,4 @@
 sheet-robot-credentials.json
 .env
 .venv
+__pycache__
