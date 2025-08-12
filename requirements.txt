@@ -1,0 +1,3 @@
+pyinstaller
+gspread
+python-dotenv
