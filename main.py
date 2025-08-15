@@ -1,16 +1,11 @@
 from dotenv import dotenv_values
 from sheetRobot import SheetRobot
-
-def initSheetRobot(path_to_credentials) -> SheetRobot:
-
-    sheet_robot = SheetRobot(path_to_credentials=path_to_credentials)
-
-    return sheet_robot
+from gspreadFactory import GspreadFactory
 
 
 if __name__ == "__main__":
     env_vars = dotenv_values(".env")
-    robot = initSheetRobot(path_to_credentials=env_vars["CREDENTIALS_JSON_FILE"])
-
-    robot.set_current_spreadsheet("Example Spreadsheet")
-    robot.fill_in_hours("08.12.2025", "Example description", 1.5)
+    service_account = GspreadFactory.createServiceAccount(path_to_credentials=env_vars["CREDENTIALS_JSON_FILE"])
+    spreadsheet = GspreadFactory.getWorkSheet(service_account=service_account, spreadsheet_name="Example Spreadsheet")
+    robot = SheetRobot()
+    robot.fill_in_hours(spreadsheet, "08.12.2025", "Example description", 1.5)
