@@ -2,6 +2,7 @@ from dotenv import dotenv_values
 from sheetRobot import SheetRobot
 from gspreadFactory import GspreadFactory
 
+# TODO add reading command line arguments to let data be variable
 if __name__ == "__main__":
     env_vars = dotenv_values(".env")
     service_account = GspreadFactory.createServiceAccount(path_to_credentials=env_vars["CREDENTIALS_JSON_FILE"])

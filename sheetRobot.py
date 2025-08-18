@@ -71,3 +71,5 @@ class SheetRobot:
     def create_new_sheet_and_set_current(self, spreadsheet_name, user_email):
         self.create_new_sheet(spreadsheet_name=spreadsheet_name, user_email=user_email)
         self.set_current_spreadsheet(spreadsheet_name=spreadsheet_name)
+    
+    # TODO add method to read data from row as tuple
