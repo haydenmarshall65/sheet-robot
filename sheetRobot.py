@@ -59,7 +59,6 @@ class SheetRobot:
         self._current_cell = "A" + str(row_number)
         print("(SR) [#] Deleted row " + str(row_number))
     
-    # TODO add method to read data from row as tuple
     @classmethod
     def read_data_on_row(self, spreadsheet, row_number):
         date = spreadsheet.acell("A" + str(row_number)).value
