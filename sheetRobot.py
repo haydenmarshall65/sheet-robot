@@ -6,7 +6,7 @@ class SheetRobot:
 
     def __init__(self, spreadsheet):
         if spreadsheet == None:
-            raise TypeError("Spreadsheet must be a GSpread Worksheet object")
+            return
         self._find_next_empty_row(spreadsheet=spreadsheet)
 
     # helper function to set self._current_cell to the next empty field
@@ -59,17 +59,11 @@ class SheetRobot:
         self._current_cell = "A" + str(row_number)
         print("(SR) [#] Deleted row " + str(row_number))
     
-    # creates a new sheet and share it with the USER_EMAIL provided in .env
-    @classmethod
-    def create_new_sheet(self, spreadsheet_name, user_email):
-        new_sheet = self._service_account.create(title=spreadsheet_name)
-        
-        new_sheet.share(email_address=user_email, perm_type="user", role="writer")
-    
-    # creates a new sheet, shares it with USER_EMAIl, and sets it as the current sheet
-    @classmethod
-    def create_new_sheet_and_set_current(self, spreadsheet_name, user_email):
-        self.create_new_sheet(spreadsheet_name=spreadsheet_name, user_email=user_email)
-        self.set_current_spreadsheet(spreadsheet_name=spreadsheet_name)
-    
     # TODO add method to read data from row as tuple
+    @classmethod
+    def read_data_on_row(self, spreadsheet, row_number):
+        date = spreadsheet.acell("A" + str(row_number)).value
+        desc = spreadsheet.acell("B" + str(row_number)).value
+        hours = spreadsheet.acell("C" + str(row_number)).value
+
+        return {"date": date, "desc": desc, "hours": hours}
