@@ -36,7 +36,7 @@ if __name__ == "__main__":
         date = args.date
         desc = args.desc
         hours = args.hours
-        row = args.line
+        row = args.row
 
         robot.fill_in_hours(spreadsheet=spreadsheet, date=date, desc=desc, hours=hours, optional_row_number=row)
     elif args.r == True:
