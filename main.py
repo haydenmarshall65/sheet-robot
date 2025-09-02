@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     env_vars = dotenv_values(".env")
     service_account = GspreadFactory.createServiceAccount(path_to_credentials=env_vars["CREDENTIALS_JSON_FILE"])
-    spreadsheet = GspreadFactory.getWorkSheet(service_account=service_account, spreadsheet_name="Hours_Task Tracker - Contractor - HM - 08.19 - 08.23")
+    spreadsheet = GspreadFactory.getWorkSheet(service_account=service_account, spreadsheet_name=args.file)
     
     robot = SheetRobot(spreadsheet=spreadsheet)
 
