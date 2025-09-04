@@ -1,12 +1,9 @@
 from dotenv import dotenv_values
-import sys
 import os
 
 current = os.path.dirname(os.path.realpath(__file__))
 # Getting the parent directory name where the current directory is present.
 parent = os.path.dirname(current)
-# adding the parent directory to the sys.path.
-sys.path.append(parent)
 
 # now we can import the module in the directory.
 from sheetRobot import SheetRobot
@@ -15,49 +12,43 @@ from gspreadFactory import GspreadFactory
 class SheetRobotTester:
     _env_vars = None
 
-    def run_tests(self):
+    total_tests = 5
+
+    def run_tests(self) -> bool:
         self._env_vars = dotenv_values(parent + '/.env')
 
-        testsPassed = 0
-        if self.testCanAuthenticate() == 1:
-            testsPassed += 1
-            print("canAuthenticate: ✓")
-        else:
-            print("canAuthenticate: X")
-        if self.testCanGetWorksheet() == 1:
-            testsPassed += 1
-            print("canGetWorksheet: ✓")
-        else:
-            print("canGetWorksheet: X")
+        tests_passed = 0
         if self.testCanAddData() == 1:
-            testsPassed += 1
+            tests_passed += 1
             print("canAddData: ✓")
         else:
             print("canAddData: X")
         if self.testCanReadData() == 1:
-            testsPassed += 1
+            tests_passed += 1
             print("canReadData: ✓")
         else:
             print("canReadData: X")
-        print("tests passed: " + str(testsPassed))
+        if self.testCanDeleteData() == 1:
+            tests_passed += 1
+            print("canDeleteData: ✓")
+        else:
+            print("canDeleteData: X")
+        if self.testCanPrintRowData() == 1:
+            tests_passed += 1
+            print("canPrintRowData: ✓")
+        else:
+            print("canPrintRowData: X")
+        if self.testCanPrintAllData() == 1:
+            tests_passed += 1
+            print("canPrintAllData: ✓")
+        else:
+            print("canPrintAllData: X")
+
+        print("sheet robot tests passed: " + str(tests_passed))
+
+        # return whether or not all tests passed
+        return tests_passed == 5
       
-    def testCanAuthenticate(self):
-        try: 
-            GspreadFactory.createServiceAccount(path_to_credentials=self._env_vars["CREDENTIALS_JSON_FILE"])
-            return 1
-        except Exception as err:
-            print(f"Could not authenticate. Reason for Error: {err}")
-            return 0
-    
-    def testCanGetWorksheet(self):
-        try: 
-            service_account = GspreadFactory.createServiceAccount(path_to_credentials=self._env_vars["CREDENTIALS_JSON_FILE"])
-            GspreadFactory.getWorkSheet(service_account=service_account, spreadsheet_name=self._env_vars["TEST_SPREADSHEET"])
-            return 1
-        except Exception as err:
-            print(f"Could not get a spreadsheet. Reason for Error: {err}")
-            return 0
-    
     def testCanAddData(self):
         service_account = GspreadFactory.createServiceAccount(path_to_credentials=self._env_vars["CREDENTIALS_JSON_FILE"])
         spreadsheet = GspreadFactory.getWorkSheet(service_account=service_account, spreadsheet_name=self._env_vars["TEST_SPREADSHEET"])
@@ -89,7 +80,60 @@ class SheetRobotTester:
         except Exception as err:
             print(f"could not read data. Reason for Error: {err}")
             return 0
-        
+    
+    def testCanDeleteData(self):
+        try:
+            service_account = GspreadFactory.createServiceAccount(path_to_credentials=self._env_vars["CREDENTIALS_JSON_FILE"])
+            spreadsheet = GspreadFactory.getWorkSheet(service_account=service_account, spreadsheet_name=self._env_vars["TEST_SPREADSHEET"])
+            robot = SheetRobot(spreadsheet=spreadsheet)
 
-test = SheetRobotTester()
-test.run_tests()
+            row_to_delete = int(robot._current_cell.split("A")[1]) - 1
+            robot.delete_hours_log(spreadsheet=spreadsheet, row_number=row_to_delete)
+            data = robot.read_data_on_row(spreadsheet=spreadsheet, row_number=row_to_delete)
+
+            if self._data_is_from_empty_row(data=data):
+                print("Data was successfully deleted.")
+                return 1
+            else:
+                print("Did not delete data.")
+                return 0
+        except Exception as err:
+            print(f"Could not delete data. Reason for Error: {err}")
+            return 0
+    
+    def testCanPrintRowData(self):
+        try:
+            service_account = GspreadFactory.createServiceAccount(path_to_credentials=self._env_vars["CREDENTIALS_JSON_FILE"])
+            spreadsheet = GspreadFactory.getWorkSheet(service_account=service_account, spreadsheet_name=self._env_vars["TEST_SPREADSHEET"])
+            robot = SheetRobot(spreadsheet=spreadsheet)
+
+            data = robot.read_data_on_row(spreadsheet=spreadsheet, row_number=9)
+            robot.print_row_data(data=data)
+            return 1
+        except Exception as err:
+            print(f"Could not print row data. Reason for Error: {err}")
+            return 0
+        
+    def testCanPrintAllData(self):
+        try:
+            service_account = GspreadFactory.createServiceAccount(path_to_credentials=self._env_vars["CREDENTIALS_JSON_FILE"])
+            spreadsheet = GspreadFactory.getWorkSheet(service_account=service_account, spreadsheet_name=self._env_vars["TEST_SPREADSHEET"])
+            robot = SheetRobot(spreadsheet=spreadsheet)
+
+            robot.print_all_data(spreadsheet=spreadsheet)
+            return 1
+        except Exception as err:
+            print(f"Could not print row data. Reason for Error: {err}")
+            return 0
+        
+    def _data_is_from_empty_row(self, data: dict):
+        empty_date = data["date"] == None or data["date"] == "Empty"
+        empty_desc = data["desc"] == None or data["desc"] == "Empty"
+        empty_hours = data["hours"] == None or data["hours"] == 0
+
+        print(f'empty_date = {empty_date}')
+
+        if empty_date and empty_desc and empty_hours:
+            return True
+        else:
+            return False

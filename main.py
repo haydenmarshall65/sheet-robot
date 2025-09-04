@@ -45,7 +45,11 @@ if __name__ == "__main__":
             robot.print_all_data(spreadsheet=spreadsheet)
         else:
             data = robot.read_data_on_row(spreadsheet=spreadsheet, row_number=row)
+            row_data = []
+            row_data.append(data["date"])
+            row_data.append(data["desc"])
+            row_data.append(data["hours"])
 
-            robot.print_row_data(data=data)
+            robot.print_row_data(data=row_data)
     else:
         print("Please choose whether to read or write to a google sheet.")

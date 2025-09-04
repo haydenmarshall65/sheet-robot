@@ -53,7 +53,7 @@ class SheetRobot:
     
     # removes data in the given row and sets to active row
     @classmethod
-    def delete_hours_log(self, spreadsheet: Spreadsheet, row_number:int):
+    def delete_hours_log(self, spreadsheet: Spreadsheet, row_number: int):
         spreadsheet.update_acell("A" + str(row_number), "")
         spreadsheet.update_acell("B" + str(row_number), "")
         spreadsheet.update_acell("C" + str(row_number), 0.0)
