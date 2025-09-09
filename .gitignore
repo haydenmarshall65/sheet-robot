@@ -3,3 +3,4 @@ sheet-robot-credentials.json
 .venv
 venv
 __pycache__
+.vscode
