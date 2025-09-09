@@ -30,7 +30,6 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Decode and create credentials file
       run: |
-        echo "${{ vars.CREDENTIALS_JSON_FILE }}"
         echo "${{ secrets.BASE64_CREDENTIALS_FILE_CONTENT }}" | base64 --decode > ${{ vars.CREDENTIALS_JSON_FILE }}
     - name: Create .env file
       run: |
