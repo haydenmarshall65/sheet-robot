@@ -33,3 +33,7 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+      env: 
+        CREDENTIALS_FILE_JSON: ${{vars.CREDENTIALS_FILE_JSON}}
+        TEST_SPREADSHEET: ${{vars.TEST_SPREADSHEET}}
+        
