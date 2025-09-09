@@ -34,6 +34,6 @@ jobs:
       run: |
         pytest
       env: 
-        CREDENTIALS_FILE_JSON: ${{ env.CREDENTIALS_FILE_JSON }}
-        TEST_SPREADSHEET: ${{ env.TEST_SPREADSHEET }}
+        CREDENTIALS_FILE_JSON: ${{ vars.CREDENTIALS_FILE_JSON }}
+        TEST_SPREADSHEET: ${{ vars.TEST_SPREADSHEET }}
         
