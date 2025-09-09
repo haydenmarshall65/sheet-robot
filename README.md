@@ -6,9 +6,33 @@ To begin, you need a Google API service account with credentials in order to edi
 
 After this is done, set up your python virtual environment with
 ```bash
-python3 -m venv <venv name>
+python3 -m venv <venv-name>
 ```
 and run
 ```bash
 pip install -r requirements.txt
 ```
+
+## To install as a single executable:
+
+Enable your python virtual env by using:
+
+```bash
+source <venv-name>/bin/activate
+# if on windows
+<venv-name>/bin/activate
+```
+
+Then, run the build command:
+```bash
+./build.sh
+```
+
+If all works, you should be able to just run:
+```bash
+./bin/sheet-robot
+```
+
+If you want, you can also add the sheet-robot to your path by adding the following line to your .bashrc:
+```bashrc
+export PATH=$PATH:$HOME/projects/sheet-robot/bin
