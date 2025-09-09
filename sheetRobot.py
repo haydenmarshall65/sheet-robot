@@ -1,11 +1,11 @@
 import gspread
-from gspread import Spreadsheet
+from gspread import Worksheet
 
 class SheetRobot:
     # the current spreadsheet to edit with
     _current_cell = "A9"
 
-    def __init__(self, spreadsheet: Spreadsheet):
+    def __init__(self, spreadsheet: Worksheet):
         if spreadsheet == None:
             return
         print("(SR) [#] New Sheet Robot initialized!")
@@ -13,7 +13,7 @@ class SheetRobot:
 
     # helper function to set self._current_cell to the next empty field
     @classmethod
-    def _find_next_empty_row(self, spreadsheet: Spreadsheet):
+    def _find_next_empty_row(self, spreadsheet: Worksheet):
         found_empty_row = False
         cell_number = self._current_cell
         row = int(cell_number.split("A")[1])
@@ -33,27 +33,31 @@ class SheetRobot:
 
     # fills in the hours on hours log spreadsheets
     @classmethod
-    def fill_in_hours(self, spreadsheet: Spreadsheet, date: str, desc: str, hours: float, optional_row_number:int=None):
+    def fill_in_hours(self, spreadsheet: Worksheet, date: str, desc: str, hours: float, optional_row_number:int=None)->bool:
         if optional_row_number != None:
             row_number = optional_row_number
         else:
             row_number = self._current_cell.split("A")[1]
 
-        # update the date work was done
-        spreadsheet.update_acell("A" + str(row_number), date)
+        try:
+            # update the date work was done
+            spreadsheet.update_acell("A" + str(row_number), date)
 
-        # update the desc of work done
-        spreadsheet.update_acell("B" + str(row_number), desc)
+            # update the desc of work done
+            spreadsheet.update_acell("B" + str(row_number), desc)
 
-        # update the hours done
-        spreadsheet.update_acell("C" + str(row_number), hours)
+            # update the hours done
+            spreadsheet.update_acell("C" + str(row_number), hours)
 
-        print("(SR) [#] Updated row " + str(row_number) + "!")
-        self._find_next_empty_row(spreadsheet=spreadsheet)
+            print("(SR) [#] Updated row " + str(row_number) + "!")
+            self._find_next_empty_row(spreadsheet=spreadsheet)
+            return True
+        except Exception:
+            return False
     
     # removes data in the given row and sets to active row
     @classmethod
-    def delete_hours_log(self, spreadsheet: Spreadsheet, row_number: int):
+    def delete_hours_log(self, spreadsheet: Worksheet, row_number: int):
         spreadsheet.update_acell("A" + str(row_number), "")
         spreadsheet.update_acell("B" + str(row_number), "")
         spreadsheet.update_acell("C" + str(row_number), 0.0)
@@ -62,7 +66,7 @@ class SheetRobot:
         print("(SR) [#] Deleted row " + str(row_number))
     
     @classmethod
-    def read_data_on_row(self, spreadsheet: Spreadsheet, row_number: int) -> dict[str, str | float]:
+    def read_data_on_row(self, spreadsheet: Worksheet, row_number: int) -> dict[str, str | float]:
         date = spreadsheet.acell("A" + str(row_number)).value
         if date == None:
             date = "Empty"
@@ -78,41 +82,50 @@ class SheetRobot:
         return {"date": date, "desc": desc, "hours": hours}
 
     @classmethod
-    def print_row_data(self, data: list, include_header:bool = True):
-        padding = 2
-        date = data[0]
-        desc = data[1]
-        hours = data[2]
+    def print_row_data(self, data: list, include_header:bool = True) -> bool:
+        try:
+            padding = 2
+            date = data[0]
+            desc = data[1]
+            hours = data[2]
 
-        dateLength = len(date)
-        dateDiff = dateLength - 4 + padding # 4 because "DATE" is 4 characters
+            dateLength = len(date)
+            dateDiff = dateLength - 4 + padding # 4 because "DATE" is 4 characters
 
-        header = "DATE" + (" " * dateDiff)
-        text = str(date) + "  "
+            header = "DATE" + (" " * dateDiff)
+            text = str(date) + "  "
 
-        descLength = len(desc)
-        descDiff = descLength - 5 + padding # 5 because " DESC" is 5 characters
-        
-        header += "| DESC" + (" " * descDiff)
-        text += "| " + str(desc) + " "
+            descLength = len(desc)
+            descDiff = descLength - 5 + padding # 5 because " DESC" is 5 characters
+            
+            header += "| DESC" + (" " * descDiff)
+            text += "| " + str(desc) + " "
 
-        # not worried about header and text difference because this is the end of the line
-        header += "| HOURS"
-        text += "| " + str(hours) + " "
+            # not worried about header and text difference because this is the end of the line
+            header += "| HOURS"
+            text += "| " + str(hours) + " "
 
-        if include_header:
-            print(header)
-        print(text)
+            if include_header:
+                print(header)
+            print(text)
+            return True
+        except:
+            return False
+
 
     @classmethod
-    def print_all_data(self, spreadsheet: Spreadsheet):
-        still_has_data = True
-        first_row = 9
-        last_row = int(self._current_cell.split("A")[1])
+    def print_all_data(self, spreadsheet: Worksheet) -> bool:
+        try:
+            first_row = 9
+            last_row = int(self._current_cell.split("A")[1])
 
-        data = spreadsheet.get_all_values()
-        
-        for i in range(first_row, last_row - 1):
-            include_header = (i == first_row)
-            self.print_row_data(data=data[i], include_header=include_header)
+            data = spreadsheet.get_all_values()
+            
+            for i in range(first_row, last_row - 1):
+                include_header = (i == first_row)
+                self.print_row_data(data=data[i], include_header=include_header)
+
+            return True
+        except:
+            return False
 
