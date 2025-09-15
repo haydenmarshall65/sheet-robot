@@ -10,5 +10,8 @@ class GspreadFactory:
         return spreadsheet.get_worksheet(0)
 
     def getWorkSheet(service_account: gspread.Client, spreadsheet_name: str) -> gspread.Worksheet:
-        spreadsheet = service_account.open(spreadsheet_name)
-        return spreadsheet.get_worksheet(0)
+        try:
+            spreadsheet = service_account.open(spreadsheet_name)
+            return spreadsheet.get_worksheet(0)
+        except gspread.exceptions.SpreadsheetNotFound:
+            print("Could not find spreadsheet under that name.")
