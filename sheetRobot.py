@@ -1,19 +1,18 @@
-import gspread
 from gspread import Worksheet
 
 class SheetRobot:
     # the current spreadsheet to edit with
     _current_cell = "A9"
 
-    def __init__(self, spreadsheet: Worksheet):
-        if spreadsheet == None:
+    def __init__(self, worksheet: Worksheet):
+        if worksheet == None:
             return
         print("(SR) [#] New Sheet Robot initialized!")
-        self._find_next_empty_row(spreadsheet=spreadsheet)
+        self._find_next_empty_row(worksheet=worksheet)
 
     # helper function to set self._current_cell to the next empty field
     @classmethod
-    def _find_next_empty_row(self, spreadsheet: Worksheet):
+    def _find_next_empty_row(self, worksheet: Worksheet):
         found_empty_row = False
         cell_number = self._current_cell
         row = int(cell_number.split("A")[1])
@@ -21,7 +20,7 @@ class SheetRobot:
         while found_empty_row == False:
             cell_number = "A" + str(row)
 
-            val = spreadsheet.acell(cell_number).value
+            val = worksheet.acell(cell_number).value
 
             if val == None or val == "":
                 self._current_cell = "A" + str(row)
@@ -33,7 +32,7 @@ class SheetRobot:
 
     # fills in the hours on hours log spreadsheets
     @classmethod
-    def fill_in_hours(self, spreadsheet: Worksheet, date: str, desc: str, hours: float, optional_row_number:int=None)->bool:
+    def fill_in_hours(self, worksheet: Worksheet, date: str, desc: str, hours: float, optional_row_number:int=None)->bool:
         if optional_row_number != None:
             row_number = optional_row_number
         else:
@@ -41,41 +40,41 @@ class SheetRobot:
 
         try:
             # update the date work was done
-            spreadsheet.update_acell("A" + str(row_number), date)
+            worksheet.update_acell("A" + str(row_number), date)
 
             # update the desc of work done
-            spreadsheet.update_acell("B" + str(row_number), desc)
+            worksheet.update_acell("B" + str(row_number), desc)
 
             # update the hours done
-            spreadsheet.update_acell("C" + str(row_number), hours)
+            worksheet.update_acell("C" + str(row_number), hours)
 
             print("(SR) [#] Updated row " + str(row_number) + "!")
-            self._find_next_empty_row(spreadsheet=spreadsheet)
+            self._find_next_empty_row(worksheet=worksheet)
             return True
         except Exception:
             return False
     
     # removes data in the given row and sets to active row
     @classmethod
-    def delete_hours_log(self, spreadsheet: Worksheet, row_number: int):
-        spreadsheet.update_acell("A" + str(row_number), "")
-        spreadsheet.update_acell("B" + str(row_number), "")
-        spreadsheet.update_acell("C" + str(row_number), 0.0)
+    def delete_hours_log(self, worksheet: Worksheet, row_number: int):
+        worksheet.update_acell("A" + str(row_number), "")
+        worksheet.update_acell("B" + str(row_number), "")
+        worksheet.update_acell("C" + str(row_number), 0.0)
         
         self._current_cell = "A" + str(row_number)
         print("(SR) [#] Deleted row " + str(row_number))
     
     @classmethod
-    def read_data_on_row(self, spreadsheet: Worksheet, row_number: int) -> dict[str, str | float]:
-        date = spreadsheet.acell("A" + str(row_number)).value
+    def read_data_on_row(self, worksheet: Worksheet, row_number: int) -> dict[str, str | float]:
+        date = worksheet.acell("A" + str(row_number)).value
         if date == None:
             date = "Empty"
 
-        desc = spreadsheet.acell("B" + str(row_number)).value
+        desc = worksheet.acell("B" + str(row_number)).value
         if desc == None:
             desc = "Empty"
 
-        hours = spreadsheet.acell("C" + str(row_number)).value
+        hours = worksheet.acell("C" + str(row_number)).value
         if hours == None:
             hours = "Empty"
 
@@ -114,12 +113,12 @@ class SheetRobot:
 
 
     @classmethod
-    def print_all_data(self, spreadsheet: Worksheet) -> bool:
+    def print_all_data(self, worksheet: Worksheet) -> bool:
         try:
             first_row = 9
             last_row = int(self._current_cell.split("A")[1])
 
-            data = spreadsheet.get_all_values()
+            data = worksheet.get_all_values()
             
             for i in range(first_row, last_row - 1):
                 include_header = (i == first_row)
