@@ -3,8 +3,10 @@ from sheetRobot import SheetRobot
 from gspreadFactory import GspreadFactory
 import argparse
 import os
-import pathlib
 import re
+
+current_dir = os.path.dirname(os.path.abspath(__file__)) + "/"
+load_dotenv(current_dir + ".env")
 
 parser = argparse.ArgumentParser(prog="Sheet Robot", description="Modify and update Google Sheets files for hours tracking")
 
@@ -24,16 +26,18 @@ dataGroup.add_argument('--date', type=str, help="The date the work was done.")
 dataGroup.add_argument('--desc', type=str, help="The description of work done.")
 dataGroup.add_argument('--hours', type=float, help="The hours worked.")
 
-# TODO add reading command line arguments to let data be variable
-if __name__ == "__main__":
-    print("Starting Sheet Robot...")
+def main():
+    if not os.getenv("CREDENTIALS_JSON_FILE"):
+        print("ERROR: Missing JSON Credentials file.")
+        return
     try:
-        HOME = os.getenv("HOME")
-        env_file_path = pathlib.Path(HOME+"/projects/sheet-robot/.env")
-        load_dotenv(env_file_path)
+        # HOME = os.getenv("HOME")
+        # env_file_path = pathlib.Path(HOME+"/projects/sheet-robot/.env")
+        # load_dotenv(env_file_path)
         args = parser.parse_args()
 
-        credentials_path = pathlib.Path(HOME+"/projects/sheet-robot/" + os.getenv("CREDENTIALS_JSON_FILE"))
+        # credentials_path = pathlib.Path(HOME+"/projects/sheet-robot/" + os.getenv("CREDENTIALS_JSON_FILE"))
+        credentials_path = current_dir + os.getenv("CREDENTIALS_JSON_FILE")
         service_account = GspreadFactory.createServiceAccount(path_to_credentials=credentials_path)
         
 
@@ -104,3 +108,7 @@ if __name__ == "__main__":
         print("Sheet Robot shutting down...")
     finally:
         print("Sheet Robot shutting down...")
+
+# TODO add reading command line arguments to let data be variable
+if __name__ == "__main__":
+    main()
