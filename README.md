@@ -35,4 +35,4 @@ If all works, you should be able to just run:
 
 If you want, you can also add the sheet-robot to your path by adding the following line to your .bashrc:
 ```bashrc
-export PATH=$PATH:$HOME/projects/sheet-robot/bin
+export PATH=$PATH:$HOME/projects/sheet-robot/bin/sheet-robot

@@ -115,7 +115,7 @@ class SheetRobot:
     @classmethod
     def print_all_data(self, worksheet: Worksheet) -> bool:
         try:
-            first_row = 9
+            first_row = 8
             last_row = int(self._current_cell.split("A")[1])
 
             data = worksheet.get_all_values()
